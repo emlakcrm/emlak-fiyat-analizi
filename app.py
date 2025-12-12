@@ -14,205 +14,187 @@ GÖNDEREN_EMAIL = ayar_getir("GÖNDEREN_EMAIL", "piyazsosu@gmail.com")
 UYGULAMA_SIFRESI = ayar_getir("UYGULAMA_SIFRESI", "ikafvsebounnuhng")
 WHATSAPP_NUMARASI = ayar_getir("WHATSAPP_NUMARASI", "905355739260")
 
-# --- VERİ ---
+# --- VERİ YÜKLEME ---
 try:
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
     df.columns = df.columns.str.strip()
 except:
-    st.error("Veri dosyası bulunamadı.")
+    st.error("Veri dosyası yüklenemedi.")
     st.stop()
 
-# --- TASARIM (CSS) ---
-st.set_page_config(page_title="Analiz | Selman Güneş", page_icon="🏡", layout="wide")
+# --- ÖZEL CSS ENJEKSİYONU (SİZİN STİLLERİNİZ) ---
+st.set_page_config(page_title="Ekspertiz | Selman Güneş", page_icon="🏡", layout="wide")
 
-st.markdown("""
+st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-        background-color: #ffffff;
-    }
+        /* 1. DEĞİŞKENLER VE TEMEL STİLLER */
+        :root {{
+            --main-dark: #1A4339;
+            --main-light: #C4D8BF;
+            --accent-color: #E7A44E;
+            --cta-dark: #D45B25;
+            --bg-color: #f6f7fb;
+            --text-color: #1A1A1A;
+        }}
 
-    /* ÜST MENÜ VE PARLAMA EFEKTİ */
-    .header-wrapper {
-        text-align: center;
-        padding: 40px 0 20px 0;
-        background: #ffffff;
-    }
-    
-    .header-wrapper h1 {
-        color: #1e293b;
-        font-weight: 800;
-        letter-spacing: -1px;
-        margin-bottom: 5px;
-    }
+        .main {{ background: var(--bg-color); }}
+        
+        /* 2. HEADER VE NAVİGASYON */
+        header {{
+            background: var(--main-dark);
+            color: #fff;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }}
+        
+        header h1 {{ font-size: 32px !important; color: #ffffff !important; font-weight: 700 !important; margin-bottom: 5px !important; }}
+        .lead {{ color: var(--main-light); font-size: 18px; margin-bottom: 20px; }}
+        
+        nav a {{
+            color: var(--main-light) !important;
+            margin: 0 15px;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 14px;
+        }}
+        
+        nav a:hover {{
+            color: var(--accent-color) !important;
+            text-shadow: 0 0 8px rgba(231, 164, 78, 0.5);
+        }}
 
-    nav {
-        margin-top: 25px;
-        border-top: 1px solid #f1f5f9;
-        border-bottom: 1px solid #f1f5f9;
-        padding: 15px 0;
-    }
+        /* 3. FORM VE BUTONLAR */
+        .stForm {{
+            background: white !important;
+            border: 1px solid var(--main-light) !important;
+            border-radius: 15px !important;
+            padding: 40px !important;
+            box-shadow: 0 8px 24px rgba(26, 67, 57, 0.08) !important;
+        }}
 
-    nav a {
-        color: #64748b !important;
-        text-decoration: none !important;
-        margin: 0 20px;
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s ease-in-out;
-        display: inline-block;
-    }
+        .stButton>button {{
+            background-color: var(--main-dark) !important;
+            color: white !important;
+            border-radius: 6px !important;
+            font-weight: 700 !important;
+            border: none !important;
+            transition: 0.3s !important;
+            height: 3.5em !important;
+        }}
 
-    /* İSTEDİĞİN PARLAMA BURADA */
-    nav a:hover {
-        color: #059669 !important; /* Canlı Yeşil */
-        text-shadow: 0px 0px 12px rgba(5, 150, 105, 0.4); /* Parlama Efekti */
-        transform: translateY(-2px);
-    }
+        .stButton>button:hover {{
+            background-color: var(--cta-dark) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 91, 37, 0.3);
+        }}
 
-    /* FORM GÜZELLEŞTİRME */
-    .stForm {
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 16px !important;
-        padding: 50px !important;
-        background-color: #f8fafc !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
-    }
+        /* 4. BİLGİ KARTLARI */
+        .info-card {{
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            height: 100%;
+        }}
+        .info-card h4 {{ color: var(--main-dark); font-weight: 700; }}
 
-    /* BUTONLAR */
-    .stButton>button {
-        background: #1A4339 !important; /* Koyu Antrasit */
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 15px 30px !important;
-        font-weight: 600 !important;
-        transition: 0.3s !important;
-        width: 100%;
-    }
-
-    .stButton>button:hover {
-        background: #059669 !important; /* Hover'da Yeşil */
-        box-shadow: 0 0 20px rgba(5, 150, 105, 0.3) !important;
-    }
-
-    /* KARTLAR */
-    .feature-card {
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        transition: 0.3s;
-    }
-    .feature-card:hover {
-        border-color: #059669;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    }
-    .feature-card h4 { color: #1e293b; font-weight: 700; margin-bottom: 10px; }
-    .feature-card p { color: #64748b; font-size: 14px; }
-
-    /* FOOTER SADELEŞTİRİLDİ */
-    .simple-footer {
-        text-align: center;
-        padding: 60px 0;
-        margin-top: 80px;
-        background: #1A4339;
-        color: #94a3b8;
-        border-radius: 20px 20px 0 0;
-    }
-    .simple-footer b { color: white; }
+        /* 5. FOOTER */
+        .footer {{
+            background: var(--main-dark);
+            color: var(--main-light);
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+            border-radius: 20px 20px 0 0;
+        }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- ÜST KISIM (HEADER) ---
+# --- HEADER BÖLÜMÜ ---
 st.markdown("""
-    <div class="header-wrapper">
-        <h1>EMLAK FİRMASI</h1>
-        <p style="color:#1A4339; font-size:16px;">Gayrimenkul Yatırım Danışmanlığı</p>
-        <nav>
-            <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
-            <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
-            <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
-            <a href="https://emlakcrm.github.io/emlak/form.html">Form</a>
-            <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
-            <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
-        </nav>
-    </div>
+    <header>
+        <div class="wrap">
+            <h1>Selman Güneş — Kepez & Antalya</h1>
+            <p class="lead">Güven, Şeffaflık ve Sonuç Odaklı Gayrimenkul Danışmanlığı</p>
+            <nav>
+                <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
+                <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
+                <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
+                <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
+                <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
+            </nav>
+        </div>
+    </header>
     """, unsafe_allow_html=True)
 
-# --- ANA FORM ---
+# --- ANA FORM ALANI ---
 st.markdown("<br>", unsafe_allow_html=True)
-col_l, col_c, col_r = st.columns([1, 4, 1])
+c_left, c_mid, c_right = st.columns([1, 6, 1])
 
-with col_c:
-    st.markdown("<h2 style='text-align:center; color:#1e293b;'>Mülkünüzün Değerini Öğrenin</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#64748b;'>Bilgilerinizi bırakın, en doğru piyasa analizini sizin için yapalım.</p>", unsafe_allow_html=True)
+with c_mid:
+    st.markdown("<h2 style='text-align:center; color:#1A4339;'>Ücretsiz Mülk Değerleme</h2>", unsafe_allow_html=True)
     
-    with st.form("vip_form"):
-        st.markdown("#### 🏠 Gayrimenkul Bilgileri")
-        f1, f2 = st.columns(2)
-        with f1:
-            mahalle = st.selectbox("📍 Bölge / Mahalle:", df['Mahalle'].unique())
+    with st.form("main_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            mahalle = st.selectbox("📍 Mahalle:", df['Mahalle'].unique())
             oda = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
-            m2 = st.number_input("📏 Net Metrekare:", 30, 1000, 100)
-        with f2:
+            m2 = st.number_input("📐 Metrekare (Brüt):", 30, 1000, 100)
+        with col2:
             bina_yasi = st.number_input("⏳ Bina Yaşı:", 0, 100, 5)
-            kat = st.selectbox("⬆️ Dairenin Katı:", ["Giriş", "Ara Kat", "En Üst", "Bahçe"])
+            kat = st.selectbox("🏢 Kat Durumu:", ["Giriş", "Ara Kat", "En Üst"])
             asansor = st.radio("🛗 Asansör:", ["Var", "Yok"], horizontal=True)
+
+        notlar = st.text_area("📝 Ek Özellikler:", placeholder="Dairenin cephesi, manzara, tadilat durumu vb.")
         
-        notlar = st.text_area("📝 Notlar (Opsiyonel):", placeholder="Mülkünüzün özel bir durumu varsa buraya yazabilirsiniz...")
-        
-        st.markdown("<br>#### 👤 İletişim Bilgileriniz", unsafe_allow_html=True)
-        ad = st.text_input("Adınız ve Soyadınız:")
+        st.markdown("<hr style='border: 0.5px solid #C4D8BF;'>", unsafe_allow_html=True)
+        ad = st.text_input("Adınız Soyadınız:")
         tel = st.text_input("Telefon Numaranız:")
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        btn1, btn2 = st.columns(2)
-        s_mail = btn1.form_submit_button("ANALİZİ MAİL İLE AL")
-        s_wa = btn2.form_submit_button("WHATSAPP İLE SOR")
+        btn_mail, btn_wa = st.columns(2)
+        s_mail = btn_mail.form_submit_button("📩 ANALİZİ E-POSTA İLE AL")
+        s_wa = btn_wa.form_submit_button("💬 WHATSAPP'TAN SOR")
 
-# --- SONUÇ PANELİ ---
+# --- ANALİZ SONUCU ---
 if (s_mail or s_wa) and ad and tel:
     filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda)]
-    min_v = int(filtre['Fiyat'].min()) if not filtre.empty else 0
-    max_v = int(filtre['Fiyat'].max()) if not filtre.empty else 0
-    tahmin = f"₺{min_v:,} - ₺{max_v:,}".replace(',', '.') if min_v > 0 else "Görüşme Gerekli"
+    min_f = int(filtre['Fiyat'].min()) if not filtre.empty else 0
+    max_f = int(filtre['Fiyat'].max()) if not filtre.empty else 0
+    sonuc = f"₺{min_f:,} - ₺{max_f:,}".replace(',', '.') if min_f > 0 else "Bölge Analizi Bekleniyor"
 
     if s_wa:
-        msg = f"Merhaba, {ad} isimli müşteri {mahalle} bölgesi için analiz istedi. Tahmin: {tahmin}"
-        st.link_button("📲 WHATSAPP MESAJINI İLET", f"https://wa.me/{WHATSAPP_NUMARASI}?text={urllib.parse.quote(msg)}", use_container_width=True)
+        msg = f"Selman Bey Merhaba, {ad} ({tel}) {mahalle} mahallesindeki {oda} dairesi için analiz istedi. Tahmini Değer: {sonuc}"
+        st.link_button("📲 WHATSAPP İLE BİLGİ GÖNDER", f"https://wa.me/{WHATSAPP_NUMARASI}?text={urllib.parse.quote(msg)}", type="primary", use_container_width=True)
 
     st.markdown(f"""
-        <div style="background:#ffffff; padding:30px; border-radius:12px; border-left:8px solid #059669; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); margin-top:20px;">
-            <p style="color:#64748b; margin:0;">Bölge Bazlı Tahmini Değer</p>
-            <h1 style="color:#1e293b; margin:0;">{tahmin}</h1>
+        <div style="background:var(--main-light); padding:25px; border-radius:10px; border:2px solid var(--main-dark); text-align:center; margin-top:20px;">
+            <h4 style="color:var(--main-dark); margin:0;">Tahmini Piyasa Değer Aralığı</h4>
+            <h1 style="color:var(--cta-dark); margin:10px 0;">{sonuc}</h1>
         </div>
     """, unsafe_allow_html=True)
 
-# --- TANITIM KARTLARI ---
-st.markdown("<br><br>", unsafe_allow_html=True)
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown('<div class="feature-card"><h4>📍 Veri Analizi</h4><p>Gerçek satış rakamları ve aktif ilanların ortalaması alınır.</p></div>', unsafe_allow_html=True)
-with c2:
-    st.markdown('<div class="feature-card"><h4>📏 Detaylı Rapor</h4><p>Binanın yapısal durumu ve teknik detayları incelenir.</p></div>', unsafe_allow_html=True)
-with c3:
-    st.markdown('<div class="feature-card"><h4>🤝 Şeffaf Süreç</h4><p>Piyasa koşullarına en uygun, gerçekçi fiyatlama yapılır.</p></div>', unsafe_allow_html=True)
+# --- ÖZELLİK KARTLARI ---
+st.markdown("<br>", unsafe_allow_html=True)
+k1, k2, k3 = st.columns(3)
+with k1:
+    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Mahallenizdeki güncel piyasa verilerini ve son satışları inceliyoruz.</p></div>', unsafe_allow_html=True)
+with k2:
+    st.markdown('<div class="info-card"><h4>📏 Teknik Kriterler</h4><p>Kat, cephe, m2 ve bina yaşı gibi faktörleri yapay zeka ile harmanlıyoruz.</p></div>', unsafe_allow_html=True)
+with k3:
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Selman Güneş rehberliğinde mülkünüzü en doğru fiyata pazarlıyoruz.</p></div>', unsafe_allow_html=True)
 
-# --- SADE FOOTER ---
+# --- FOOTER ---
 st.markdown(f"""
-    <div class="simple-footer">
-        <b>Selman Güneş Gayrimenkul</b><br>
-        Kepez / Antalya<br><br>
-        <div style="font-size:12px; opacity:0.6;">
-            © 2024 Tüm Hakları Saklıdır.<br>
-            İletişim: {WHATSAPP_NUMARASI}
-        </div>
+    <div class="footer">
+        <h3>Selman Güneş Emlak</h3>
+        <p>Kepez / Antalya — Sizin İçin En Doğru Değer</p>
+        <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
-
