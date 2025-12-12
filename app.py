@@ -25,94 +25,99 @@ try:
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
     df.columns = df.columns.str.strip()
 except:
-    st.error("⚠️ Veri dosyası bulunamadı.")
+    st.error("⚠️ Veri dosyası (CSV) bulunamadı.")
     st.stop()
 
 # =========================================================
-# 📧 3. E-POSTA MOTORU
+# 🎨 3. GÖRSEL TASARIM (EMLAK CRM KOYU YEŞİL TEMA)
 # =========================================================
-def mail_gonder(konu, icerik):
-    try:
-        mesaj = MIMEMultipart()
-        mesaj['From'] = GÖNDEREN_EMAIL
-        mesaj['To'] = GÖNDEREN_EMAIL
-        mesaj['Subject'] = konu
-        mesaj.attach(MIMEText(icerik, 'plain'))
-        sunucu = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI.replace(" ", ""))
-        sunucu.sendmail(GÖNDEREN_EMAIL, GÖNDEREN_EMAIL, mesaj.as_string())
-        sunucu.quit()
-        return True
-    except:
-        return False
-
-# =========================================================
-# 🎨 4. GÖRSEL TASARIM (EMLAK CRM RENKLERİ)
-# =========================================================
-st.set_page_config(page_title="Emlak Firmasi | Analiz", page_icon="🏡", layout="wide")
+st.set_page_config(page_title="Analiz | Selman Güneş", page_icon="🏡", layout="wide")
 
 st.markdown("""
     <style>
-    /* Genel Font ve Arka Plan */
-    .main { background-color: #f4f7f6; }
-    
-    /* Header & Navigasyon */
+    /* Ana Font ve Arka Plan */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
+    .main { background-color: #f8faf9; }
+
+    /* Header Tasarımı */
     header {
-        background-color: #1A4339;
+        background-color: #0b3d2e; /* Koyu Orman Yeşili */
         color: white;
         padding: 40px 20px;
         text-align: center;
-        border-radius: 0 0 20px 20px;
+        border-radius: 0 0 30px 30px;
         margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    header h1 { color: #ffffff !important; font-size: 28px !important; margin-bottom: 10px; }
-    header .lead { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+    header h1 { color: #ffffff !important; font-size: 32px !important; font-weight: 600; margin-bottom: 10px; }
+    header .lead { font-size: 18px; opacity: 0.9; margin-bottom: 25px; }
+    
+    /* Navigasyon ve Hover Efekti */
     header nav a {
-        color: #3498db !important;
+        color: #ffffff !important;
         text-decoration: none;
         margin: 0 15px;
-        font-weight: bold;
-        font-size: 15px;
+        font-weight: 500;
+        padding: 8px 15px;
+        transition: 0.3s all ease;
+        border-radius: 5px;
     }
-    header nav a:hover { color: white !important; }
+    header nav a:hover {
+        background-color: #2e7d32; /* Üzerine gelince yeşil */
+        color: white !important;
+    }
 
-    /* Form Kutusu */
+    /* Form ve Buton Tasarımı */
     .stForm {
         background-color: white !important;
-        padding: 30px !important;
-        border-radius: 15px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-        border: none !important;
+        padding: 40px !important;
+        border-radius: 20px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+        border: 1px solid #e1e8e5 !important;
+    }
+    .stButton>button {
+        background-color: #0b3d2e !important;
+        color: white !important;
+        border-radius: 10px !important;
+        height: 3.5em !important;
+        width: 100%;
+        font-weight: bold;
+        transition: 0.4s ease;
+    }
+    .stButton>button:hover {
+        background-color: #2e7d32 !important; /* Buton hover */
+        border: none;
+        transform: translateY(-2px);
     }
 
-    /* Tanıtım Kartları */
+    /* Kartlar */
     .info-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
+        background-color: white;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        border-top: 4px solid #1A4339;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin: 10px 0;
-        min-height: 150px;
+        border-bottom: 4px solid #0b3d2e;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
     }
-    .info-card h4 { color: #2c3e50; margin-bottom: 10px; }
-    .info-card p { color: #7f8c8d; font-size: 14px; }
+    .info-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .info-card h4 { color: #0b3d2e; }
 
     /* Footer */
     .footer {
         text-align: center;
-        padding: 40px;
-        background-color: ##1A4339;
-        color: #bdc3c7;
-        margin-top: 50px;
-        border-radius: 20px 20px 0 0;
+        padding: 50px;
+        background-color: #0b3d2e;
+        color: #e1e8e5;
+        margin-top: 60px;
+        border-radius: 30px 30px 0 0;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # =========================================================
-# 🏗️ 5. SAYFA YAPISI (HEADER)
+# 🏗️ 4. HEADER BÖLÜMÜ
 # =========================================================
 st.markdown("""
     <header>
@@ -121,102 +126,104 @@ st.markdown("""
             <p class="lead">Kepez bölgesinde güven, şeffaflık ve sonuç odaklı emlak danışmanlığı.</p>
             <nav>
                 <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
-                <a href="#">Hakkımızda</a>
-                <a href="#">İlanlar</a>
-                <a href="#">Antalya</a>
-                <a href="#">Form</a>
-                <a href="#">İletişim</a>
+                <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
+                <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
+                <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
+                <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
             </nav>
         </div>
     </header>
     """, unsafe_allow_html=True)
 
 # =========================================================
-# 📋 6. ANA FORM (EKSPERTİZ)
+# 📋 5. ANALİZ FORMU (Lead Generation)
 # =========================================================
+st.markdown("### 📊 Gayrimenkul Ön Analiz Formu")
+st.write("Bilgilerinizi bırakın, bölge verileriyle mülkünüzü saniyeler içinde analiz edelim.")
+
 with st.form("ekspertiz_formu"):
-    st.subheader("🏡 Ücretsiz Mülk Değerleme Formu")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        mahalle = st.selectbox("📍 Mahalle:", df['Mahalle'].unique())
+    c1, c2 = st.columns(2)
+    with c1:
+        mahalle = st.selectbox("📍 Mahalle Seçiniz:", df['Mahalle'].unique())
         oda = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
         bina_yasi = st.number_input("⏳ Bina Yaşı:", 0, 100, 5)
         asansor = st.radio("🛗 Asansör:", ["Var", "Yok"], horizontal=True)
 
-    with col2:
+    with c2:
         cephe = st.selectbox("☀️ Cephe:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
         kat_sayisi = st.number_input("🏢 Toplam Kat:", 1, 50, 5)
         bulundugu_kat = st.selectbox("⬆️ Dairenin Katı:", ["Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
         m2 = st.number_input("📏 Net Metrekare:", 30, 1000, 100)
 
-    notlar = st.text_area("📝 Ek Özellikler:", placeholder="Daireniz hakkında bilmemiz gereken detaylar...")
+    notlar = st.text_area("📝 Eklemek İstediğiniz Detaylar:", placeholder="Örn: Site içerisinde, havuz manzaralı, yeni tadilatlı...")
     
     st.markdown("---")
-    ad_soyad = st.text_input("Adınız Soyadınız:")
-    telefon = st.text_input("Telefon Numaranız:")
+    st.markdown("#### 👤 İletişim Bilgileri")
+    ad = st.text_input("Adınız Soyadınız:")
+    tel = st.text_input("Telefon Numaranız:")
     
-    c_mail, c_wa = st.columns(2)
-    with c_mail:
-        sub_mail = st.form_submit_button("📧 Mail İle Analiz İstiyorum")
-    with c_wa:
-        sub_wa = st.form_submit_button("💬 WhatsApp İle Devam Et")
+    btn1, btn2 = st.columns(2)
+    submit_mail = btn1.form_submit_button("📧 Mail İle Analiz İstiyorum")
+    submit_wa = btn2.form_submit_button("💬 WhatsApp İle Bilgi Al")
 
 # =========================================================
-# ⚙️ 7. İŞLEMLER VE ANALİZ KARTI
+# ⚙️ 6. İŞLEMLER VE SONUÇ
 # =========================================================
-if sub_mail or sub_wa:
-    if not ad_soyad or not telefon:
-        st.warning("⚠️ Lütfen iletişim bilgilerinizi eksiksiz girin.")
+if submit_mail or submit_wa:
+    if not ad or not tel:
+        st.warning("⚠️ Size ulaşabilmemiz için adınızı ve telefonunuzu girmelisiniz.")
     else:
+        # Fiyat Tahmini
         filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda)]
-        min_f = int(filtre['Fiyat'].min()) if not filtre.empty else 0
-        max_f = int(filtre['Fiyat'].max()) if not filtre.empty else 0
-        f_sonuc = f"₺{min_f:,} - ₺{max_f:,}".replace(',', '.') if min_f > 0 else "Bölge Uzmanına Danışın"
+        min_v = int(filtre['Fiyat'].min()) if not filtre.empty else 0
+        max_v = int(filtre['Fiyat'].max()) if not filtre.empty else 0
+        f_goster = f"₺{min_v:,} - ₺{max_v:,}".replace(',', '.') if min_v > 0 else "Bölge Uzmanına Danışın"
         
-        bilgi = (f"Yeni Talep: {ad_soyad}\nTel: {telefon}\n"
-                 f"Mülk: {mahalle} - {oda} - {m2}m2\n"
-                 f"Detay: Kat {bulundugu_kat}, {bina_yasi} Yaş, {cephe} Cephe\n"
-                 f"Not: {notlar}\n\nTahmini Değer: {f_sonuc}")
+        mesaj = (f"Selman Bey Yeni Analiz Talebi!\n"
+                 f"👤 Müşteri: {ad}\n📞 Tel: {tel}\n"
+                 f"📍 Mahalle: {mahalle} | {oda}\n"
+                 f"📐 Alan: {m2}m2 | Kat: {bulundugu_kat}/{kat_sayisi}\n"
+                 f"📝 Not: {notlar}\n💰 Tahmin: {f_goster}")
 
-        if sub_mail:
-            if mail_gonder(f"Yeni Analiz - {ad_soyad}", bilgi):
-                st.success("✅ Talebiniz e-posta ile iletildi.")
-                st.balloons()
-
-        if sub_wa:
-            encoded_text = urllib.parse.quote(bilgi)
-            st.success("✅ Analiz Raporu Hazır!")
-            st.link_button("📲 WHATSAPP MESAJINI TAMAMLA", f"https://wa.me/{WHATSAPP_NUMARASI}?text={encoded_text}", type="primary", use_container_width=True)
+        if submit_wa:
+            encoded_wa = urllib.parse.quote(mesaj)
+            st.success("✅ Verileriniz hazırlandı!")
+            st.link_button("📲 ANALİZİ WHATSAPP'TAN TAMAMLA", f"https://wa.me/{WHATSAPP_NUMARASI}?text={encoded_wa}", type="primary", use_container_width=True)
 
         st.markdown(f"""
-            <div style="background-color:#ffffff; padding:30px; border-radius:15px; border:2px solid #3498db; text-align:center; margin-top:20px;">
-                <h3 style="color:#2c3e50; margin:0;">Tahmini Piyasa Değeri</h3>
-                <h1 style="color:#2980b9; font-size:42px; margin:10px 0;">{f_sonuc}</h1>
+            <div style="background-color:white; padding:35px; border-radius:20px; border:3px solid #0b3d2e; text-align:center; margin-top:20px;">
+                <h3 style="color:#0b3d2e; margin:0;">Mülkünüz İçin Tahmini Değer</h3>
+                <h1 style="color:#2e7d32; font-size:48px; margin:10px 0;">{f_sonuc if 'f_sonuc' in locals() else f_goster}</h1>
+                <p style="color:#666;">Piyasa ortalamasıdır. Net rapor için Selman Güneş ile iletişime geçiniz.</p>
             </div>
         """, unsafe_allow_html=True)
 
+# =========================================================
+# 🃏 7. TANITIM KARTLARI
+# =========================================================
 st.write("---")
+k1, k2, k3 = st.columns(3)
+with k1:
+    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Kepez ve çevresindeki gerçek satış verilerini süzüyoruz.</p></div>', unsafe_allow_html=True)
+with k2:
+    st.markdown('<div class="info-card"><h4>📏 Detaylı Kriter</h4><p>Bina yaşı, cephe ve kat gibi teknik detayları hesaplıyoruz.</p></div>', unsafe_allow_html=True)
+with k3:
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Selman Güneş ile mülkünüzün satış sürecini profesyonelleştirin.</p></div>', unsafe_allow_html=True)
 
 # =========================================================
-# 🃏 8. TANITIM KARTLARI (AŞAĞI TAŞINDI)
-# =========================================================
-card_col1, card_col2, card_col3 = st.columns(3)
-with card_col1:
-    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Mahallenizdeki benzer ilanların gerçek satış verileri incelenir.</p></div>', unsafe_allow_html=True)
-with card_col2:
-    st.markdown('<div class="info-card"><h4>📏 Detaylı Kriter</h4><p>Kat, cephe ve bina yaşı gibi 10 farklı kriter baz alınır.</p></div>', unsafe_allow_html=True)
-with card_col3:
-    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Size özel yol haritası sunacağım.</p></div>', unsafe_allow_html=True)
-
-# =========================================================
-# 🏁 9. FOOTER (ALT BİLGİ)
+# 🏁 8. FOOTER (SOSYAL BAĞLANTILAR)
 # =========================================================
 st.markdown(f"""
     <div class="footer">
+        <h3>Selman Güneş Gayrimenkul</h3>
+        <p>Kepez / Antalya</p>
+        <div style="margin: 20px 0;">
+            <a href="https://instagram.com/selmangunesemlak" style="color:white; margin:0 10px; text-decoration:none;">📸 Instagram</a> | 
+            <a href="https://facebook.com/emlakfirma" style="color:white; margin:0 10px; text-decoration:none;">🔵 Facebook</a> | 
+            <a href="https://wa.me/{WHATSAPP_NUMARASI}" style="color:white; margin:0 10px; text-decoration:none;">💬 WhatsApp</a>
+        </div>
+        <hr style="opacity:0.2;">
         <p>© 2024 Selman Güneş Emlak | Tüm Hakları Saklıdır.</p>
-        <p>İletişim: {WHATSAPP_NUMARASI} | Antalya / Türkiye</p>
+        <p>İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
-
-
