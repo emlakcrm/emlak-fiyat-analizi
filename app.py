@@ -140,7 +140,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 c_left, c_mid, c_right = st.columns([1, 6, 1])
 
 with c_mid:
-    st.markdown("<h2 style='text-align:center; color:#1A4339;'>Ücretsiz Mülk Değerleme</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align:center; color:#1A4339;'>Gayrimenkul Analiz & Değerleme</h2>", unsafe_allow_html=True)
     
     with st.form("main_form"):
         col1, col2 = st.columns(2)
@@ -193,9 +193,9 @@ with k3:
 
 # --- FOOTER ---
 st.markdown(f"""
-     <div class="footer">        <h3>Selman Güneş Emlak</h3>        <p>Kepez / Antalya — Sizin İçin En Doğru Değer</p>        <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>    </div>    """, unsafe_allow_html=True)
-0 commit commentsComments0
-
-
-
-
+    <div class="footer">
+        <h3>Selman Güneş Emlak</h3>
+        <p>Kepez / Antalya — Sizin İçin En Doğru Değer</p>
+        <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
+    </div>
+    """, unsafe_allow_html=True)
