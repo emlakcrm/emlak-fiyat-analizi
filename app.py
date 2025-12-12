@@ -4,11 +4,20 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# --- AYARLARINIZI BURAYA GİRİN ---
-GÖNDEREN_EMAIL = "piyazsosu@gmail.com" 
-UYGULAMA_ŞİFRESİ = "ikafvsebounnuhng" 
-ALICI_EMAIL = "sizin_email_adresiniz@gmail.com"
-
+# --- GİZLİ AYARLARI (SECRETS) OKUMA ---
+# Şifreler ve e-postalar artık secrets.toml dosyasından okunacaktır.
+try:
+    # Streamlit Cloud'da çalışıyorsa, bilgileri st.secrets'tan oku
+    GÖNDEREN_EMAIL = st.secrets["GÖNDEREN_EMAIL"]
+    UYGULAMA_ŞİFRESİ = st.secrets["UYGULAMA_SIFRESI"]
+    ALICI_EMAIL = GÖNDEREN_EMAIL  # Genellikle gönderen ve alıcı aynıdır.
+except Exception:
+    # Eğer Streamlit Cloud'da değilseniz (yerel bilgisayarınızda), 
+    # bu kısım çalışmaz, bu yüzden buraya bir hata mesajı ekleyelim.
+    # (Bu blokta ŞİFRENİZ ASLA YAZMAMALIDIR)
+    st.error("GÜVENLİK HATASI: Şifreleriniz yüklenemedi. Lütfen secrets.toml dosyasını kontrol edin.")
+    st.stop() # Hata verip uygulamayı durdur.
+# --- GİZLİ AYARLARIN SONU ---
 # --- VERİ OKUMA (HATA GİDERİLMİŞ HALİ) ---
 try:
     # sep=None ve engine='python' sayesinde virgül veya noktalı virgülü kendi bulur
@@ -90,6 +99,5 @@ if submit_button:
 # Analiz bittiğinde gösterilecek bölümün içine eklenebilir
 whatsapp_mesaji = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım ön analiz sonucunda detaylı bilgi almak istiyorum."
 whatsapp_linki = f"https://wa.me/905355739260?text={whatsapp_mesaji.replace(' ', '%20')}"
-
 
 st.link_button("💬 Detaylı Analiz İçin Uzmanımıza WhatsApp'tan Yazın", whatsapp_linki)
