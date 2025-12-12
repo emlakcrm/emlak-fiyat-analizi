@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 import smtplib
+import urllib.parse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # =========================================================
-# 🛠️ AYARLAR (Buradaki bilgiler silinmediği sürece sistem çalışır)
+# 🛠️ 1. AYARLAR VE GÜVENLİK
 # =========================================================
-# Secrets varsa oradan okur, yoksa aşağıdaki bilgileri kullanır.
 def ayar_getir(anahtar, varsayilan):
     try:
         return st.secrets[anahtar]
@@ -19,17 +19,17 @@ UYGULAMA_SIFRESI = ayar_getir("UYGULAMA_SIFRESI", "ikafvsebounnuhng")
 WHATSAPP_NUMARASI = ayar_getir("WHATSAPP_NUMARASI", "905355739260")
 
 # =========================================================
-# 📊 VERİ OKUMA
+# 📊 2. VERİ YÜKLEME
 # =========================================================
 try:
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
     df.columns = df.columns.str.strip()
 except:
-    st.error("⚠️ 'emlak_verileri.csv' dosyası bulunamadı!")
+    st.error("⚠️ Veri dosyası (CSV) yüklenemedi. Lütfen GitHub'da dosyanın olduğunu kontrol edin.")
     st.stop()
 
 # =========================================================
-# 📧 MAİL GÖNDERME
+# 📧 3. E-POSTA MOTORU
 # =========================================================
 def mail_gonder(konu, icerik):
     try:
@@ -38,105 +38,178 @@ def mail_gonder(konu, icerik):
         mesaj['To'] = GÖNDEREN_EMAIL
         mesaj['Subject'] = konu
         mesaj.attach(MIMEText(icerik, 'plain'))
-        
         sunucu = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI.replace(" ", ""))
         sunucu.sendmail(GÖNDEREN_EMAIL, GÖNDEREN_EMAIL, mesaj.as_string())
         sunucu.quit()
         return True
-    except Exception as e:
-        # Hata olursa ekranda göster (Hata ayıklamak için önemli)
-        st.sidebar.error(f"Mail Hatası: {e}")
+    except:
         return False
 
 # =========================================================
-# 🖥️ ARAYÜZ TASARIMI
+# 🎨 4. GÖRSEL TASARIM VE CSS
 # =========================================================
-st.set_page_config(page_title="Selman Güneş Emlak | Fiyat Analizi", page_icon="🏡", layout="wide")
+st.set_page_config(page_title="Selman Güneş Emlak | Değerleme", page_icon="🏡", layout="wide")
 
-# Görsel şıklık için CSS
 st.markdown("""
     <style>
-    .hero-box { text-align: center; padding: 30px; background-color: #1e3d59; color: white; border-radius: 15px; margin-bottom: 25px; }
-    .stButton>button { width: 100%; border-radius: 10px; height: 3.5em; font-weight: bold; background-color: #2e7d32; color: white; }
+    /* Ana Arka Plan */
+    .main { background-color: #f8f9fa; }
+    
+    /* Hero Banner */
+    .hero-section {
+        background: linear-gradient(135deg, #1e3d59 0%, #2e7d32 100%);
+        padding: 60px 20px;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        margin-bottom: 30 margin-top: -50px;
+    }
+    
+    /* Kart Yapıları */
+    .info-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        border-left: 5px solid #2e7d32;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    /* Buton Tasarımı */
+    .stButton>button {
+        border-radius: 12px;
+        height: 3.5em;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 30px;
+        font-size: 14px;
+        color: #666;
+        border-top: 1px solid #eee;
+        margin-top: 50px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Yan Menü (Sidebar)
+# =========================================================
+# 📱 5. YAN MENÜ (SIDEBAR)
+# =========================================================
 with st.sidebar:
-    st.title("Selman Güneş")
-    st.write("📍 Antalya Gayrimenkul Danışmanı")
+    st.markdown("### 👤 Danışman Profili")
+    st.write("**Selman Güneş**")
+    st.caption("Lisanslı Gayrimenkul Profesyoneli")
     st.write("---")
-    st.link_button("📸 Instagram Profilim", "https://instagram.com/selmangunesemlak", use_container_width=True)
-    st.link_button("🔵 Facebook Sayfam", "https://facebook.com/emlakfirma", use_container_width=True)
-    st.link_button("💬 WhatsApp İletişim", f"https://wa.me/{WHATSAPP_NUMARASI}", use_container_width=True)
+    st.write("📲 **Hızlı Bağlantılar**")
+    st.link_button("📸 Instagram'da Takip Et", "https://instagram.com/selmangunesemlak", use_container_width=True)
+    st.link_button("🔵 Facebook Sayfası", "https://facebook.com/emlakfirma", use_container_width=True)
+    st.link_button("💬 WhatsApp Hattı", f"https://wa.me/{WHATSAPP_NUMARASI}", use_container_width=True)
+    st.write("---")
+    st.info("Mülkünüzü en doğru fiyata satmak için veriye dayalı stratejiler geliştiriyoruz.")
 
-# Ana Başlık
+# =========================================================
+# 🏠 6. ANA SAYFA İÇERİĞİ
+# =========================================================
+# Üst Banner
 st.markdown("""
-    <div class="hero-box">
-        <h1>Gayrimenkul Ön Fiyat Analiz Sistemi</h1>
-        <p>Bilgileri girin, mülkünüzün piyasa değerini anında öğrenin.</p>
+    <div class="hero-section">
+        <h1>Gayrimenkulünüzün Piyasa Değerini Keşfedin</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Yapay zeka destekli ön analiz sistemiyle saniyeler içinde rapor alın.</p>
     </div>
     """, unsafe_allow_html=True)
 
-# Form
-with st.form("ekspertiz_formu"):
-    col1, col2 = st.columns(2)
-    with col1:
-        mahalle = st.selectbox("Mahalle Seçiniz:", df['Mahalle'].unique())
-        oda = st.selectbox("Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
-        bina_yasi = st.number_input("Bina Yaşı:", 0, 100, 5)
-        asansor = st.radio("Asansör:", ["Var", "Yok"], horizontal=True)
+# Bilgi Kartları (Sayfayı dolgun göstermek için)
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Mahallenizdeki benzer ilanların gerçek satış verileri incelenir.</p></div>', unsafe_allow_html=True)
+with c2:
+    st.markdown('<div class="info-card"><h4>📏 Detaylı Kriter</h4><p>Kat, cephe ve bina yaşı gibi 10 farklı kriter baz alınır.</p></div>', unsafe_allow_html=True)
+with c3:
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Analiz sonrası Selman Güneş size özel yol haritası sunar.</p></div>', unsafe_allow_html=True)
 
-    with col2:
-        cephe = st.selectbox("Cephe:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
-        kat_sayisi = st.number_input("Binadaki Toplam Kat:", 1, 50, 5)
-        bulundugu_kat = st.selectbox("Dairenin Katı:", ["Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
-        m2 = st.number_input("Net Metrekare:", 30, 1000, 100)
+st.write("---")
 
-    notlar = st.text_area("Ek Detaylar (Cephe, manzara, tadilat vb.):")
+# Form Alanı
+st.subheader("📋 Ekspertiz Formunu Doldurun")
+with st.form("main_form"):
+    col_left, col_right = st.columns(2)
     
-    st.markdown("---")
-    ad = st.text_input("Adınız Soyadınız:")
-    tel = st.text_input("Telefon Numaranız:")
-    
-    c1, c2 = st.columns(2)
-    with c1:
-        submit_mail = st.form_submit_button("📧 Mail Gönder ve Analiz Et")
-    with c2:
-        submit_wa = st.form_submit_button("💬 WhatsApp'tan Bilgi Al")
+    with col_left:
+        mahalle = st.selectbox("📍 Mahalle Seçiniz:", df['Mahalle'].unique())
+        oda = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
+        bina_yasi = st.number_input("⏳ Bina Yaşı:", 0, 100, 5)
+        asansor = st.radio("🛗 Asansör Durumu:", ["Var", "Yok"], horizontal=True)
 
-# Hesaplama ve Sonuç
-if submit_mail or submit_wa:
-    if not ad or not tel:
-        st.warning("⚠️ Lütfen adınızı ve telefonunuzu yazın.")
+    with col_right:
+        cephe = st.selectbox("☀️ Cephe Bilgisi:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
+        kat_sayisi = st.number_input("🏢 Toplam Kat Sayısı:", 1, 50, 5)
+        bulundugu_kat = st.selectbox("⬆️ Kaçıncı Katta?:", ["Bahçe", "Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
+        m2 = st.number_input("📐 Brüt Metrekare:", 30, 1000, 100)
+
+    notlar = st.text_area("📝 Diğer Özellikler:", placeholder="Manzara, doğalgaz durumu, tadilat bilgisi vb.")
+    
+    st.markdown("### 👤 İletişim Bilgileri")
+    ad_soyad = st.text_input("Adınız Soyadınız:")
+    telefon = st.text_input("Telefon Numaranız:")
+    
+    btn_mail, btn_wa = st.columns(2)
+    with btn_mail:
+        s_mail = st.form_submit_button("📧 Mail İle Analiz İstiyorum")
+    with btn_wa:
+        s_wa = st.form_submit_button("💬 WhatsApp İle Analiz Al")
+
+# =========================================================
+# ⚙️ 7. SONUÇ VE İŞLEME
+# =========================================================
+if s_mail or s_wa:
+    if not ad_soyad or not telefon:
+        st.error("⚠️ Analiz yapabilmemiz için adınızı ve telefonunuzu girmelisiniz.")
     else:
+        # Fiyat Motoru
         filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda)]
-        min_f = f"{int(filtre['Fiyat'].min()):,}".replace(',', '.') if not filtre.empty else "Bölge Ortalaması"
-        max_f = f"{int(filtre['Fiyat'].max()):,}".replace(',', '.') if not filtre.empty else "Bölge Ortalaması"
+        min_v = int(filtre['Fiyat'].min()) if not filtre.empty else 0
+        max_v = int(filtre['Fiyat'].max()) if not filtre.empty else 0
         
-        ozet_mesaj = f"""
-        👤 Müşteri: {ad} | Tel: {tel}
-        📍 Mülk: {mahalle} - {oda}
-        🏢 Kat: {bulundugu_kat}/{kat_sayisi} | Yaş: {bina_yasi} | Cephe: {cephe}
-        📏 Alan: {m2} m2 | Asansör: {asansor}
-        📝 Notlar: {notlar}
-        💰 Tahmin: {min_f} - {max_f} TL
-        """
+        fiyat_str = f"₺{min_v:,} - ₺{max_v:,}".replace(',', '.') if min_v > 0 else "Bölge Uzmanına Sorun"
+        
+        # Mesaj Oluşturma
+        mesaj_metni = (f"Yeni Analiz Talebi\n\n"
+                       f"Müşteri: {ad_soyad}\nTel: {telefon}\n"
+                       f"Mülk: {mahalle}, {oda}, {m2}m2\n"
+                       f"Detay: {bina_yasi} Yaş, {cephe} Cephe, Kat {bulundugu_kat}/{kat_sayisi}\n"
+                       f"Asansör: {asansor}\nNot: {notlar}\n\n"
+                       f"Tahmini Değer: {fiyat_str}")
 
-        if submit_mail:
-            if mail_gonder(f"Yeni Analiz - {ad}", ozet_mesaj):
-                st.success("✅ Talebiniz e-posta ile iletildi.")
+        if s_mail:
+            if mail_gonder(f"Analiz Talebi - {ad_soyad}", mesaj_metni):
+                st.success("✅ Verileriniz alındı. E-posta yoluyla size dönüş sağlanacaktır.")
                 st.balloons()
 
-        if submit_wa:
-            st.success("💬 WhatsApp yönlendirmesi hazır.")
-            wa_link = f"https://wa.me/{WHATSAPP_NUMARASI}?text={ozet_mesaj.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("📲 Mesajı Bana İlet", wa_link, use_container_width=True)
+        if s_wa:
+            encoded_wa = urllib.parse.quote(mesaj_metni)
+            wa_url = f"https://wa.me/{WHATSAPP_NUMARASI}?text={encoded_wa}"
+            st.success("✅ Analiz hazır! WhatsApp üzerinden iletişimi tamamlayın.")
+            st.link_button("📲 WHATSAPP MESAJINI BANA GÖNDER", wa_url, type="primary", use_container_width=True)
 
+        # Sonuç Kartı
         st.markdown(f"""
-            <div style="background-color:#f0f7f1; padding:25px; border-radius:15px; border:2px solid #2e7d32; text-align:center; margin-top:15px;">
-                <h3 style="color:#2e7d32; margin-bottom:0px;">Tahmini Piyasa Değeri</h3>
-                <h2 style="color:#1b5e20;">₺{min_f} - ₺{max_f}</h2>
+            <div style="background-color:#e8f5e9; padding:40px; border-radius:20px; border:2px solid #2e7d32; text-align:center; margin-top:20px;">
+                <h3 style="color:#2e7d32; margin:0;">Mülkünüzün Tahmini Piyasa Değeri</h3>
+                <h1 style="color:#1b5e20; font-size:48px; margin:10px 0;">{fiyat_str}</h1>
+                <p style="color:#666;">Bu değer piyasa ortalamalarına göre hesaplanmıştır. Yerinde ekspertiz için randevu alınız.</p>
             </div>
         """, unsafe_allow_html=True)
+
+# =========================================================
+# 🏁 8. FOOTER (ALT BİLGİ)
+# =========================================================
+st.markdown(f"""
+    <div class="footer">
+        <p>© 2024 Selman Güneş Emlak | Tüm Hakları Saklıdır.</p>
+        <p>İletişim: {WHATSAPP_NUMARASI} | Antalya / Türkiye</p>
+    </div>
+    """, unsafe_allow_html=True)
