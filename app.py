@@ -91,7 +91,7 @@ st.markdown("""
         padding: 20px;
         border-radius: 12px;
         text-align: center;
-        border-top: 4px solid #3498db;
+        border-top: 4px solid ##1A4339;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         margin: 10px 0;
         min-height: 150px;
@@ -103,7 +103,7 @@ st.markdown("""
     .footer {
         text-align: center;
         padding: 40px;
-        background-color: #2c3e50;
+        background-color: ##1A4339;
         color: #bdc3c7;
         margin-top: 50px;
         border-radius: 20px 20px 0 0;
@@ -207,7 +207,7 @@ with card_col1:
 with card_col2:
     st.markdown('<div class="info-card"><h4>📏 Detaylı Kriter</h4><p>Kat, cephe ve bina yaşı gibi 10 farklı kriter baz alınır.</p></div>', unsafe_allow_html=True)
 with card_col3:
-    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Analiz sonrası Selman Güneş size özel yol haritası sunar.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Size özel yol haritası sunacağım.</p></div>', unsafe_allow_html=True)
 
 # =========================================================
 # 🏁 9. FOOTER (ALT BİLGİ)
@@ -218,3 +218,4 @@ st.markdown(f"""
         <p>İletişim: {WHATSAPP_NUMARASI} | Antalya / Türkiye</p>
     </div>
     """, unsafe_allow_html=True)
+
