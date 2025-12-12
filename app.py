@@ -4,33 +4,28 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# --- GİZLİ AYARLARI (SECRETS) OKUMA ---
-# Şifreler ve e-postalar artık secrets.toml dosyasından okunacaktır.
+# --- 1. GİZLİ AYARLAR (SECRETS) ---
 try:
-    # Streamlit Cloud'da çalışıyorsa, bilgileri st.secrets'tan oku
+    # Streamlit Cloud'da (İnternette) çalışırken buradan okur
     GÖNDEREN_EMAIL = st.secrets["GÖNDEREN_EMAIL"]
     UYGULAMA_ŞİFRESİ = st.secrets["UYGULAMA_SIFRESI"]
-    ALICI_EMAIL = GÖNDEREN_EMAIL  # Genellikle gönderen ve alıcı aynıdır.
+    ALICI_EMAIL = GÖNDEREN_EMAIL 
 except Exception:
-    # Eğer Streamlit Cloud'da değilseniz (yerel bilgisayarınızda), 
-    # bu kısım çalışmaz, bu yüzden buraya bir hata mesajı ekleyelim.
-    # (Bu blokta ŞİFRENİZ ASLA YAZMAMALIDIR)
-    st.error("GÜVENLİK HATASI: Şifreleriniz yüklenemedi. Lütfen secrets.toml dosyasını kontrol edin.")
-    st.stop() # Hata verip uygulamayı durdur.
-# --- GİZLİ AYARLARIN SONU ---
-# --- VERİ OKUMA (HATA GİDERİLMİŞ HALİ) ---
+    # Bilgisayarınızda test ederken (Yerelde) hata almamak için burayı kullanır
+    # NOT: GitHub'a yüklemeden önce bu tırnak içlerini temizleyebilirsiniz
+    GÖNDEREN_EMAIL = "sizin_mailiniz@gmail.com" 
+    UYGULAMA_ŞİFRESİ = "o_16_karakterli_kod" 
+    ALICI_EMAIL = "sizin_mailiniz@gmail.com"
+
+# --- 2. VERİ OKUMA ---
 try:
-    # sep=None ve engine='python' sayesinde virgül veya noktalı virgülü kendi bulur
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
-    
-    # Sütun isimlerindeki gizli boşlukları temizleyelim
-    df.columns = df.columns.str.strip()
-    
+    df.columns = df.columns.str.strip() # Sütun isimlerindeki boşlukları temizler
 except Exception as e:
-    st.error(f"Dosya okuma hatası: {e}")
+    st.error(f"⚠️ Veri dosyası okunamadı: {e}")
     st.stop()
 
-# --- FONKSİYON: MAİL GÖNDERME ---
+# --- 3. MAİL GÖNDERME FONKSİYONU ---
 def mail_gonder(konu, icerik):
     try:
         mesaj = MIMEMultipart()
@@ -38,66 +33,65 @@ def mail_gonder(konu, icerik):
         mesaj['To'] = ALICI_EMAIL
         mesaj['Subject'] = konu
         mesaj.attach(MIMEText(icerik, 'plain'))
+        
         sunucu = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_ŞİFRESİ)
         sunucu.sendmail(GÖNDEREN_EMAIL, ALICI_EMAIL, mesaj.as_string())
         sunucu.quit()
         return True
     except Exception as e:
-        st.error(f"Mail gönderilemedi: {e}")
+        st.error(f"❌ Mail gönderilemedi: {e}")
         return False
 
-# --- WEB SAYFASI ---
+# --- 4. WEB ARAYÜZÜ ---
+st.set_page_config(page_title="Emlak Fiyat Analizi", page_icon="🏡")
 st.title("🏡 Gayrimenkul Ön Fiyat Analizi")
 
-# Eğer 'Mahalle' sütunu yoksa kullanıcıya uyaralım
-if 'Mahalle' not in df.columns:
-    st.error(f"CSV dosyasında 'Mahalle' başlığı bulunamadı. Mevcut başlıklar: {list(df.columns)}")
-    st.stop()
-
-with st.form(key='fiyat_analiz_formu'):
+with st.form(key='emlak_formu'):
     st.header("Konut Bilgileri")
     
-    mahalle = st.selectbox("📍 Mahalle Seçiniz:", df['Mahalle'].unique())
-    oda_sayisi = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1"])
-    metrekare = st.number_input("📏 Brüt Metrekare (m²):", min_value=30, max_value=500, value=100)
-    bina_yasi = st.number_input("⏳ Bina Yaşı:", min_value=0, max_value=50, value=5)
-    kat = st.number_input("⬆️ Bulunduğu Kat:", min_value=0, max_value=50, value=3)
-    
-    asansor_var = st.checkbox("Asansör Var mı?")
-    aciklama = st.text_area("Ek Açıklamalar:")
-    
-    st.header("İletişim Bilgileri")
+    col1, col2 = st.columns(2)
+    with col1:
+        mahalle = st.selectbox("📍 Mahalle:", df['Mahalle'].unique())
+        oda_sayisi = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1"])
+    with col2:
+        metrekare = st.number_input("📏 Metrekare (m²):", 30, 500, 100)
+        bina_yasi = st.number_input("⏳ Bina Yaşı:", 0, 50, 5)
+
     ad_soyad = st.text_input("👤 Adınız Soyadınız:")
     telefon = st.text_input("📱 Telefon Numaranız:")
     
-    # Buton mutlaka formun içinde olmalı (with bloğunun hizasında)
-    submit_button = st.form_submit_button(label='Fiyat Belirle / Tahmin Et')
+    submit = st.form_submit_button(label='Fiyat Analizi Yap')
 
-if submit_button:
+# --- 5. HESAPLAMA VE SONUÇ ---
+if submit:
     if not ad_soyad or not telefon:
-        st.warning("Lütfen iletişim bilgilerinizi doldurun.")
+        st.warning("⚠️ Lütfen iletişim bilgilerinizi eksiksiz girin.")
     else:
-        # Analiz kısmı
-        filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda_sayisi)]
+        # Basit Filtreleme ve Fiyat Tahmini
+        veriler = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda_sayisi)]
         
-        if filtre.empty:
-            st.warning("Bu mahalle ve oda sayısına göre tam eşleşen veri yok, genel bir tahmin yapılıyor.")
-            min_fiyat, max_fiyat = "Bilinmiyor", "Bilinmiyor"
+        if not veriler.empty:
+            min_f = f"₺{int(veriler['Fiyat'].min()):,}".replace(',', '.')
+            max_f = f"₺{int(veriler['Fiyat'].max()):,}".replace(',', '.')
         else:
-            min_val = filtre['Fiyat'].min()
-            max_val = filtre['Fiyat'].max()
-            min_fiyat = f"₺{int(min_val):,}".replace(',', '.')
-            max_fiyat = f"₺{int(max_val):,}".replace(',', '.')
+            min_f, max_f = "Analiz Ediliyor...", "Analiz Ediliyor..."
 
-        # Mail içeriği
-        icerik = f"İsim: {ad_soyad}\nTel: {telefon}\nMahalle: {mahalle}\nm2: {metrekare}\nNot: {aciklama}"
+        # Mail İçeriği
+        mail_icerik = f"Yeni Talep!\n\nİsim: {ad_soyad}\nTel: {telefon}\nMahalle: {mahalle}\nm2: {metrekare}\nOda: {oda_sayisi}"
         
-        if mail_gonder("YENİ EMLAK TALEBİ", icerik):
-            st.success(f"Analiz Tamamlandı! Tahmini Aralığınız: {min_fiyat} - {max_fiyat}")
+        if mail_gonder("🏠 YENİ İLAN ANALİZ TALEBİ", mail_icerik):
+            st.success("✅ Analiz Talebiniz Alındı!")
             st.balloons()
-# Analiz bittiğinde gösterilecek bölümün içine eklenebilir
-whatsapp_mesaji = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım ön analiz sonucunda detaylı bilgi almak istiyorum."
-whatsapp_linki = f"https://wa.me/905355739260?text={whatsapp_mesaji.replace(' ', '%20')}"
-
-st.link_button("💬 Detaylı Analiz İçin Uzmanımıza WhatsApp'tan Yazın", whatsapp_linki)
+            
+            # Sonuç Ekranı
+            st.subheader("📊 Tahmini Değer Aralığı")
+            c1, c2 = st.columns(2)
+            c1.metric("Minimum", min_f)
+            c2.metric("Maksimum", max_f)
+            
+            # WhatsApp Butonu
+            st.markdown("---")
+            wa_mesaj = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım analiz sonrası detaylı bilgi almak istiyorum."
+            wa_link = f"https://wa.me/905XXXXXXXXXX?text={wa_mesaj.replace(' ', '%20')}"
+            st.link_button("💬 Uzmanımıza WhatsApp'tan Yazın", wa_link)
