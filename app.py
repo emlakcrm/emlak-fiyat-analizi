@@ -127,6 +127,7 @@ st.markdown("""
                 <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
                 <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
                 <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
+                <a href="https://emlakcrm.github.io/emlak/form.html">Form</a>
                 <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
                 <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
             </nav>
@@ -188,13 +189,13 @@ with k1:
 with k2:
     st.markdown('<div class="info-card"><h4>📏 Teknik Kriterler</h4><p>Kat, cephe, m2 ve bina yaşı gibi faktörleri yapay zeka ile harmanlıyoruz.</p></div>', unsafe_allow_html=True)
 with k3:
-    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Selman Güneş rehberliğinde mülkünüzü en doğru fiyata pazarlıyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Mülkünüzü en doğru fiyata pazarlıyoruz.</p></div>', unsafe_allow_html=True)
 
 # --- FOOTER ---
 st.markdown(f"""
     <div class="footer">
-        <h3>Selman Güneş Emlak</h3>
-        <p>Kepez / Antalya — Sizin İçin En Doğru Değer</p>
-        <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
+        <h1>Emlak Firmasi</h1>
+                <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
