@@ -121,7 +121,7 @@ st.markdown(f"""
 st.markdown("""
     <header>
         <div class="wrap">
-            <h1>Selman Güneş — Kepez & Antalya</h1>
+            <h1>Antalya Gayrimenkul Danışmanı</h1>
             <p class="lead">Güven, Şeffaflık ve Sonuç Odaklı Gayrimenkul Danışmanlığı</p>
             <nav>
                 <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
@@ -199,3 +199,4 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
