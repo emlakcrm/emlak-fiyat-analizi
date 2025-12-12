@@ -193,13 +193,8 @@ with k3:
 
 # --- FOOTER ---
 st.markdown(f"""
-    <div class="footer">
-        <h1>Selman Güneş</h1>
-                <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
-       
-                <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
-    </div>
-    """, unsafe_allow_html=True)
+     <div class="footer">        <h3>Selman Güneş Emlak</h3>        <p>Kepez / Antalya — Sizin İçin En Doğru Değer</p>        <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>    </div>    """, unsafe_allow_html=True)
+0 commit commentsComments0
 
 
 
