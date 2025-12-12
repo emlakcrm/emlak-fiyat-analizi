@@ -10,7 +10,7 @@ try:
     UYGULAMA_ŞİFRESİ = st.secrets["UYGULAMA_SIFRESI"]
     ALICI_EMAIL = GÖNDEREN_EMAIL 
 except Exception:
-    GÖNDEREN_EMAIL = "sizin_mailiniz@gmail.com" 
+    GÖNDEREN_EMAIL = "piyazsosu@gmail.com" 
     UYGULAMA_ŞİFRESİ = "o_16_karakterli_kod" 
     ALICI_EMAIL = "sizin_mailiniz@gmail.com"
 
@@ -120,3 +120,4 @@ if submit:
             wa_mesaj = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım analiz sonrası detaylı bilgi almak istiyorum. (Ad: {ad_soyad})"
             wa_link = f"https://wa.me/905355739260?text={wa_mesaj.replace(' ', '%20')}"
             st.link_button("💬 Şimdi WhatsApp'tan Detayları Görüşün", wa_link)
+
