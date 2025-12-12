@@ -194,8 +194,9 @@ with k3:
 # --- FOOTER ---
 st.markdown(f"""
     <div class="footer">
-        <h1>Emlak Firmasi</h1>
-                <p style="font-size:13px; opacity:0.8;">© 2024 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
+       
+                <p style="font-size:13px; opacity:0.8;">© 2025 Selman Güneş Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
 
