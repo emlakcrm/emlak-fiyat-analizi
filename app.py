@@ -93,5 +93,6 @@ if submit:
             # WhatsApp Butonu
             st.markdown("---")
             wa_mesaj = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım analiz sonrası detaylı bilgi almak istiyorum."
-            wa_link = f"https://wa.me/905XXXXXXXXXX?text={wa_mesaj.replace(' ', '%20')}"
+            wa_link = f"https://wa.me/905355739260?text={wa_mesaj.replace(' ', '%20')}"
             st.link_button("💬 Uzmanımıza WhatsApp'tan Yazın", wa_link)
+
