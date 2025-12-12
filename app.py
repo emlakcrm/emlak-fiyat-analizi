@@ -85,7 +85,7 @@ st.markdown("""
 
     /* BUTONLAR */
     .stButton>button {
-        background: #1e293b !important; /* Koyu Antrasit */
+        background: #1A4339 !important; /* Koyu Antrasit */
         color: white !important;
         border: none !important;
         border-radius: 8px !important;
@@ -121,7 +121,7 @@ st.markdown("""
         text-align: center;
         padding: 60px 0;
         margin-top: 80px;
-        background: #1e293b;
+        background: #1A4339;
         color: #94a3b8;
         border-radius: 20px 20px 0 0;
     }
@@ -132,12 +132,13 @@ st.markdown("""
 # --- ÜST KISIM (HEADER) ---
 st.markdown("""
     <div class="header-wrapper">
-        <h1>SELMAN GÜNEŞ</h1>
-        <p style="color:#64748b; font-size:16px;">Gayrimenkul Yatırım Danışmanlığı</p>
+        <h1>EMLAK FİRMASI</h1>
+        <p style="color:#1A4339; font-size:16px;">Gayrimenkul Yatırım Danışmanlığı</p>
         <nav>
             <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
             <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
             <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
+            <a href="https://emlakcrm.github.io/emlak/form.html">Form</a>
             <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
             <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
         </nav>
@@ -214,3 +215,4 @@ st.markdown(f"""
         </div>
     </div>
     """, unsafe_allow_html=True)
+
