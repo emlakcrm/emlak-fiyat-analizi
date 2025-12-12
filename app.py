@@ -4,10 +4,16 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# --- AYARLAR ---
-GÖNDEREN_EMAIL = "piyazsosu@gmail.com"
-UYGULAMA_SIFRESI = "ikafvsebounnuhng"
-WHATSAPP_NUMARASI = "905355739260"
+# --- AYARLAR (GİZLENMİŞ) ---
+try:
+    GÖNDEREN_EMAIL = st.secrets["GÖNDEREN_EMAIL"]
+    UYGULAMA_SIFRESI = st.secrets["UYGULAMA_SIFRESI"]
+    WHATSAPP_NUMARASI = st.secrets["WHATSAPP_NUMARASI"]
+except:
+    # Eğer secrets bulunamazsa hata vermemesi için yedek
+    GÖNDEREN_EMAIL = "piyazsosu@gmail.com"
+    UYGULAMA_SIFRESI = "ikafvsebounnuhng"
+    WHATSAPP_NUMARASI = "905355739260"
 
 # --- VERİ OKUMA ---
 try:
@@ -26,7 +32,7 @@ def mail_gonder(konu, icerik):
         mesaj['Subject'] = konu
         mesaj.attach(MIMEText(icerik, 'plain'))
         sunucu = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI)
+        sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI.replace(" ", ""))
         sunucu.sendmail(GÖNDEREN_EMAIL, GÖNDEREN_EMAIL, mesaj.as_string())
         sunucu.quit()
         return True
@@ -69,23 +75,23 @@ st.markdown("""
 
 # --- ANALİZ FORMU ---
 with st.form("ekspertiz_formu"):
-    st.subheader("🏠 Mülk Bilgileri")
+    st.subheader("Mülk Bilgileri")
     col_a, col_b = st.columns(2)
     with col_a:
-        mahalle = st.selectbox("📍 Mahalle Seçiniz:", df['Mahalle'].unique())
-        oda = st.selectbox("🛏️ Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
-        bina_yasi = st.number_input("⏳ Bina Yaşı:", 0, 100, 5)
-        asansor = st.radio("🛗 Asansör:", ["Var", "Yok"], horizontal=True)
+        mahalle = st.selectbox("Mahalle Seçiniz:", df['Mahalle'].unique())
+        oda = st.selectbox("Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
+        bina_yasi = st.number_input("Bina Yaşı:", 0, 100, 5)
+        asansor = st.radio("Asansör:", ["Var", "Yok"], horizontal=True)
 
     with col_b:
-        cephe = st.selectbox("☀️ Cephe:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
-        kat_sayisi = st.number_input("🏢 Binadaki Toplam Kat:", 1, 50, 5)
-        bulundugu_kat = st.selectbox("⬆️ Dairenin Katı:", ["Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
-        m2 = st.number_input("📏 Net Metrekare:", 30, 1000, 100)
+        cephe = st.selectbox("Cephe:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
+        kat_sayisi = st.number_input("Binadaki Toplam Kat:", 1, 50, 5)
+        bulundugu_kat = st.selectbox("Dairenin Katı:", ["Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
+        m2 = st.number_input("Net Metrekare:", 30, 1000, 100)
 
-    notlar = st.text_area("📝 Ek Bilgiler:", placeholder="Daireniz hakkında eklemek istediğiniz detaylar (Örn: masrafsız, yeni tadilatlı vb.)")
+    notlar = st.text_area("Ek Bilgiler:", placeholder="Daireniz hakkında eklemek istediğiniz detaylar (Örn: masrafsız, yeni tadilatlı vb.)")
     
-    st.markdown("### 👤 İletişim")
+    st.markdown("### İletişim")
     ad = st.text_input("Adınız Soyadınız:")
     tel = st.text_input("Telefon Numaranız:")
     
@@ -105,14 +111,14 @@ if submit_mail or submit_wa:
         max_f = f"{int(filtre['Fiyat'].max()):,}".replace(',', '.') if not filtre.empty else "---"
         
         bilgi_metni = f"""
-👤 Müşteri: {ad}
-📱 Tel: {tel}
-📍 Mülk: {mahalle} - {oda}
-⏳ Yaş: {bina_yasi} | Cephe: {cephe}
-🏢 Kat: {bulundugu_kat}/{kat_sayisi} | {m2} m2
-🛗 Asansör: {asansor}
-📝 Notlar: {notlar}
-💰 Tahmini Değer: {min_f} - {max_f} TL
+Müşteri: {ad}
+Tel: {tel}
+Mülk: {mahalle} - {oda}
+Yaş: {bina_yasi} | Cephe: {cephe}
+Kat: {bulundugu_kat}/{kat_sayisi} | {m2} m2
+Asansör: {asansor}
+Notlar: {notlar}
+Tahmini Değer: {min_f} - {max_f} TL
         """
 
         if submit_mail:
