@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 
 # --- AYARLARINIZI BURAYA GİRİN ---
 GÖNDEREN_EMAIL = "piyazsosu@gmail.com" 
-UYGULAMA_ŞİFRESİ = "wwanupzypysvmftx" 
+UYGULAMA_ŞİFRESİ = "ikafvsebounnuhng" 
 ALICI_EMAIL = "sizin_email_adresiniz@gmail.com"
 
 # --- VERİ OKUMA (HATA GİDERİLMİŞ HALİ) ---
@@ -90,5 +90,6 @@ if submit_button:
 # Analiz bittiğinde gösterilecek bölümün içine eklenebilir
 whatsapp_mesaji = f"Merhaba, {mahalle} mahallesindeki {oda_sayisi} dairem için yaptığım ön analiz sonucunda detaylı bilgi almak istiyorum."
 whatsapp_linki = f"https://wa.me/905355739260?text={whatsapp_mesaji.replace(' ', '%20')}"
+
 
 st.link_button("💬 Detaylı Analiz İçin Uzmanımıza WhatsApp'tan Yazın", whatsapp_linki)
