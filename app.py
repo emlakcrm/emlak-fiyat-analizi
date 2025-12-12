@@ -91,7 +91,7 @@ st.markdown("""
         padding: 20px;
         border-radius: 12px;
         text-align: center;
-        border-top: 4px solid ##1A4339;
+        border-top: 4px solid #1A4339;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         margin: 10px 0;
         min-height: 150px;
@@ -218,4 +218,5 @@ st.markdown(f"""
         <p>İletişim: {WHATSAPP_NUMARASI} | Antalya / Türkiye</p>
     </div>
     """, unsafe_allow_html=True)
+
 
