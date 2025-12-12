@@ -5,29 +5,36 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # =========================================================
-# 🛠️ 1. ADIM: AYARLARINIZI BURAYA GİRİN
+# 🛠️ 1. ADIM: AYARLAR VE GÜVENLİK (SECRETS)
 # =========================================================
-GÖNDEREN_EMAIL = "piyazsosu@gmail.com" # Gmail adresiniz
-UYGULAMA_SIFRESI = "ikafvsebounnuhng"     # 16 haneli Google uygulama şifreniz (boşluklu veya boşluksuz fark etmez)
-ALICI_EMAIL = GÖNDEREN_EMAIL
-WHATSAPP_NUMARASI = "905355739260"         # Başında 90 ile kendi numaranız (Örn: 905321234567)
+# Telefon numaranız başında 90 olacak şekilde ayarlandı
+WHATSAPP_NUMARASI = "905355739260" 
 
-# Şifredeki boşlukları temizleyelim (hata almamak için)
+try:
+    # Streamlit Cloud üzerinde (Canlıda) çalışırken buradan okur
+    GÖNDEREN_EMAIL = st.secrets["GÖNDEREN_EMAIL"]
+    UYGULAMA_SIFRESI = st.secrets["UYGULAMA_SIFRESI"]
+except Exception:
+    # Yerelde veya Secrets ayarlanmadığında sizin verdiğiniz bilgileri kullanır
+    GÖNDEREN_EMAIL = "piyazsosu@gmail.com"
+    UYGULAMA_SIFRESI = "ikafvsebounnuhng"
+
+ALICI_EMAIL = GÖNDEREN_EMAIL
+# Şifredeki olası boşlukları temizler
 TEMIZ_SIFRE = UYGULAMA_SIFRESI.replace(" ", "")
 
 # =========================================================
-# 📊 2. ADIM: VERİ OKUMA SİSTEMİ
+# 📊 2. ADIM: VERİ OKUMA
 # =========================================================
 try:
-    # CSV dosyanızı okur
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
     df.columns = df.columns.str.strip()
 except Exception as e:
-    st.error("⚠️ 'emlak_verileri.csv' dosyası GitHub'da bulunamadı veya hatalı.")
+    st.error("⚠️ 'emlak_verileri.csv' dosyası bulunamadı. Lütfen GitHub'da olduğundan emin olun.")
     st.stop()
 
 # =========================================================
-# 📧 3. ADIM: MAİL GÖNDERME FONKSİYONU
+# 📧 3. ADIM: MAİL GÖNDERME SİSTEMİ
 # =========================================================
 def mail_gonder(konu, icerik):
     try:
@@ -47,7 +54,7 @@ def mail_gonder(konu, icerik):
         return False
 
 # =========================================================
-# 🖥️ 4. ADIM: WEB ARAYÜZÜ (SIDEBAR & FORM)
+# 🖥️ 4. ADIM: ARAYÜZ (SIDEBAR & ANA SAYFA)
 # =========================================================
 st.set_page_config(page_title="Emlak Fiyat Analizi", page_icon="🏡", layout="wide")
 
@@ -85,7 +92,7 @@ with st.form(key='analiz_formu'):
 
     st.header("👤 İletişim Bilgileri")
     ad_soyad = st.text_input("Adınız Soyadınız:")
-    telefon = st.text_input("Telefon Numaranız:")
+    telefon_giris = st.text_input("Telefon Numaranız:")
     
     submit_button = st.form_submit_button(label='Ücretsiz Analiz Talebi Gönder')
 
@@ -93,7 +100,7 @@ with st.form(key='analiz_formu'):
 # ⚙️ 5. ADIM: ANALİZ VE SONUÇ EKRANI
 # =========================================================
 if submit_button:
-    if ad_soyad and telefon:
+    if ad_soyad and telefon_giris:
         # Verileri Filtrele
         filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda_sayisi)]
         
@@ -108,7 +115,7 @@ if submit_button:
         YENİ ANALİZ TALEBİ!
         -------------------
         Müşteri: {ad_soyad}
-        Telefon: {telefon}
+        Telefon: {telefon_giris}
         
         Mülk Bilgileri:
         - Mahalle: {mahalle}
