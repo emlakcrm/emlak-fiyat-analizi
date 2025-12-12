@@ -4,26 +4,33 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# --- AYARLAR (GİZLENMİŞ) ---
-try:
-    GÖNDEREN_EMAIL = st.secrets["GÖNDEREN_EMAIL"]
-    UYGULAMA_SIFRESI = st.secrets["UYGULAMA_SIFRESI"]
-    WHATSAPP_NUMARASI = st.secrets["WHATSAPP_NUMARASI"]
-except:
-    # Eğer secrets bulunamazsa hata vermemesi için yedek
-    GÖNDEREN_EMAIL = "piyazsosu@gmail.com"
-    UYGULAMA_SIFRESI = "ikafvsebounnuhng"
-    WHATSAPP_NUMARASI = "905355739260"
+# =========================================================
+# 🛠️ AYARLAR (Buradaki bilgiler silinmediği sürece sistem çalışır)
+# =========================================================
+# Secrets varsa oradan okur, yoksa aşağıdaki bilgileri kullanır.
+def ayar_getir(anahtar, varsayilan):
+    try:
+        return st.secrets[anahtar]
+    except:
+        return varsayilan
 
-# --- VERİ OKUMA ---
+GÖNDEREN_EMAIL = ayar_getir("GÖNDEREN_EMAIL", "piyazsosu@gmail.com")
+UYGULAMA_SIFRESI = ayar_getir("UYGULAMA_SIFRESI", "ikafvsebounnuhng")
+WHATSAPP_NUMARASI = ayar_getir("WHATSAPP_NUMARASI", "905355739260")
+
+# =========================================================
+# 📊 VERİ OKUMA
+# =========================================================
 try:
     df = pd.read_csv('emlak_verileri.csv', sep=None, engine='python', encoding='utf-8-sig')
     df.columns = df.columns.str.strip()
 except:
-    st.error("⚠️ Veri dosyası yüklenemedi!")
+    st.error("⚠️ 'emlak_verileri.csv' dosyası bulunamadı!")
     st.stop()
 
-# --- MAİL GÖNDERME ---
+# =========================================================
+# 📧 MAİL GÖNDERME
+# =========================================================
 def mail_gonder(konu, icerik):
     try:
         mesaj = MIMEMultipart()
@@ -31,110 +38,105 @@ def mail_gonder(konu, icerik):
         mesaj['To'] = GÖNDEREN_EMAIL
         mesaj['Subject'] = konu
         mesaj.attach(MIMEText(icerik, 'plain'))
+        
         sunucu = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI.replace(" ", ""))
         sunucu.sendmail(GÖNDEREN_EMAIL, GÖNDEREN_EMAIL, mesaj.as_string())
         sunucu.quit()
         return True
-    except:
+    except Exception as e:
+        # Hata olursa ekranda göster (Hata ayıklamak için önemli)
+        st.sidebar.error(f"Mail Hatası: {e}")
         return False
 
-# --- SAYFA AYARLARI ---
+# =========================================================
+# 🖥️ ARAYÜZ TASARIMI
+# =========================================================
 st.set_page_config(page_title="Selman Güneş Emlak | Fiyat Analizi", page_icon="🏡", layout="wide")
 
-# --- STİL DÜZENLEME (CSS) ---
+# Görsel şıklık için CSS
 st.markdown("""
     <style>
-    .main { background-color: #ffffff; }
-    .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
-    .hero-text { text-align: center; padding: 30px; background-color: #1e3d59; color: white; border-radius: 15px; margin-bottom: 25px; }
+    .hero-box { text-align: center; padding: 30px; background-color: #1e3d59; color: white; border-radius: 15px; margin-bottom: 25px; }
+    .stButton>button { width: 100%; border-radius: 10px; height: 3.5em; font-weight: bold; background-color: #2e7d32; color: white; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- YAN MENÜ (SIDEBAR) ---
+# Yan Menü (Sidebar)
 with st.sidebar:
     st.title("Selman Güneş")
-    st.subheader("Gayrimenkul Danışmanı")
-    st.write("Bölgenizdeki mülklerin doğru değerini bulması için profesyonel destek sunuyorum.")
-    
+    st.write("📍 Antalya Gayrimenkul Danışmanı")
     st.write("---")
-    st.write("📱 **Beni Takip Edin**")
-    st.link_button("📸 Instagram", "https://instagram.com/selmangunesemlak", use_container_width=True)
-    st.link_button("🔵 Facebook", "https://facebook.com/emlakfirma", use_container_width=True)
+    st.link_button("📸 Instagram Profilim", "https://instagram.com/selmangunesemlak", use_container_width=True)
+    st.link_button("🔵 Facebook Sayfam", "https://facebook.com/emlakfirma", use_container_width=True)
     st.link_button("💬 WhatsApp İletişim", f"https://wa.me/{WHATSAPP_NUMARASI}", use_container_width=True)
-    st.write("---")
-    st.info("Hızlı analiz ve profesyonel hizmet için doğru yerdesiniz.")
 
-# --- ANA SAYFA GİRİŞ ---
+# Ana Başlık
 st.markdown("""
-    <div class="hero-text">
+    <div class="hero-box">
         <h1>Gayrimenkul Ön Fiyat Analiz Sistemi</h1>
-        <p>Aşağıdaki bilgileri eksiksiz doldurarak mülkünüzün tahmini değerini hemen öğrenebilirsiniz.</p>
+        <p>Bilgileri girin, mülkünüzün piyasa değerini anında öğrenin.</p>
     </div>
     """, unsafe_allow_html=True)
 
-# --- ANALİZ FORMU ---
+# Form
 with st.form("ekspertiz_formu"):
-    st.subheader("Mülk Bilgileri")
-    col_a, col_b = st.columns(2)
-    with col_a:
+    col1, col2 = st.columns(2)
+    with col1:
         mahalle = st.selectbox("Mahalle Seçiniz:", df['Mahalle'].unique())
         oda = st.selectbox("Oda Sayısı:", ["1+1", "2+1", "3+1", "4+1", "5+1", "Dubleks"])
         bina_yasi = st.number_input("Bina Yaşı:", 0, 100, 5)
         asansor = st.radio("Asansör:", ["Var", "Yok"], horizontal=True)
 
-    with col_b:
+    with col2:
         cephe = st.selectbox("Cephe:", ["Güney", "Kuzey", "Doğu", "Batı", "Güney-Doğu", "Güney-Batı"])
         kat_sayisi = st.number_input("Binadaki Toplam Kat:", 1, 50, 5)
         bulundugu_kat = st.selectbox("Dairenin Katı:", ["Giriş", "1", "2", "3", "4", "5", "10+", "En Üst"])
         m2 = st.number_input("Net Metrekare:", 30, 1000, 100)
 
-    notlar = st.text_area("Ek Bilgiler:", placeholder="Daireniz hakkında eklemek istediğiniz detaylar (Örn: masrafsız, yeni tadilatlı vb.)")
+    notlar = st.text_area("Ek Detaylar (Cephe, manzara, tadilat vb.):")
     
-    st.markdown("### İletişim")
+    st.markdown("---")
     ad = st.text_input("Adınız Soyadınız:")
     tel = st.text_input("Telefon Numaranız:")
     
-    col_f1, col_f2 = st.columns(2)
-    with col_f1:
-        submit_mail = st.form_submit_button("📧 Mail İle Analiz Gönder")
-    with col_f2:
-        submit_wa = st.form_submit_button("💬 WhatsApp İle Analiz Al")
+    c1, c2 = st.columns(2)
+    with c1:
+        submit_mail = st.form_submit_button("📧 Mail Gönder ve Analiz Et")
+    with c2:
+        submit_wa = st.form_submit_button("💬 WhatsApp'tan Bilgi Al")
 
-# --- SONUÇ VE İŞLEM ---
+# Hesaplama ve Sonuç
 if submit_mail or submit_wa:
     if not ad or not tel:
-        st.warning("⚠️ Size geri dönebilmemiz için isim ve telefon gereklidir.")
+        st.warning("⚠️ Lütfen adınızı ve telefonunuzu yazın.")
     else:
         filtre = df[(df['Mahalle'] == mahalle) & (df['Oda_Sayisi'] == oda)]
-        min_f = f"{int(filtre['Fiyat'].min()):,}".replace(',', '.') if not filtre.empty else "---"
-        max_f = f"{int(filtre['Fiyat'].max()):,}".replace(',', '.') if not filtre.empty else "---"
+        min_f = f"{int(filtre['Fiyat'].min()):,}".replace(',', '.') if not filtre.empty else "Bölge Ortalaması"
+        max_f = f"{int(filtre['Fiyat'].max()):,}".replace(',', '.') if not filtre.empty else "Bölge Ortalaması"
         
-        bilgi_metni = f"""
-Müşteri: {ad}
-Tel: {tel}
-Mülk: {mahalle} - {oda}
-Yaş: {bina_yasi} | Cephe: {cephe}
-Kat: {bulundugu_kat}/{kat_sayisi} | {m2} m2
-Asansör: {asansor}
-Notlar: {notlar}
-Tahmini Değer: {min_f} - {max_f} TL
+        ozet_mesaj = f"""
+        👤 Müşteri: {ad} | Tel: {tel}
+        📍 Mülk: {mahalle} - {oda}
+        🏢 Kat: {bulundugu_kat}/{kat_sayisi} | Yaş: {bina_yasi} | Cephe: {cephe}
+        📏 Alan: {m2} m2 | Asansör: {asansor}
+        📝 Notlar: {notlar}
+        💰 Tahmin: {min_f} - {max_f} TL
         """
 
         if submit_mail:
-            if mail_gonder(f"Yeni Analiz - {ad}", bilgi_metni):
-                st.success("✅ Talebiniz başarıyla e-posta ile iletildi.")
+            if mail_gonder(f"Yeni Analiz - {ad}", ozet_mesaj):
+                st.success("✅ Talebiniz e-posta ile iletildi.")
                 st.balloons()
 
         if submit_wa:
-            st.success("💬 Veriler hazırlandı, WhatsApp'a yönlendiriliyorsunuz...")
-            wa_link = f"https://wa.me/{WHATSAPP_NUMARASI}?text={bilgi_metni.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("📲 Mesajı Selman Güneş'e İlet", wa_link, type="primary", use_container_width=True)
+            st.success("💬 WhatsApp yönlendirmesi hazır.")
+            wa_link = f"https://wa.me/{WHATSAPP_NUMARASI}?text={ozet_mesaj.replace(' ', '%20').replace('\n', '%0A')}"
+            st.link_button("📲 Mesajı Bana İlet", wa_link, use_container_width=True)
 
         st.markdown(f"""
-            <div style="background-color:#f0f7f1; padding:30px; border-radius:15px; border:2px solid #2e7d32; text-align:center; margin-top:20px;">
-                <h3 style="color:#2e7d32;">Bölgenizdeki Tahmini Değer Aralığı</h3>
+            <div style="background-color:#f0f7f1; padding:25px; border-radius:15px; border:2px solid #2e7d32; text-align:center; margin-top:15px;">
+                <h3 style="color:#2e7d32; margin-bottom:0px;">Tahmini Piyasa Değeri</h3>
                 <h2 style="color:#1b5e20;">₺{min_f} - ₺{max_f}</h2>
-                <p style="color:#555;">Bu rakamlar önizleme amaçlıdır. Net değerleme için yerinde ekspertiz gereklidir.</p>
             </div>
         """, unsafe_allow_html=True)
