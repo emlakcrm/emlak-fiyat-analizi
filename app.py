@@ -195,8 +195,9 @@ with k3:
 st.markdown(f"""
     <div class="footer">
        
-                <p style="font-size:13px; opacity:0.8;">© 2025 Selman Güneş Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
+                <p style="font-size:13px; opacity:0.8;"> © 2025 Selman Güneş Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
 
 
