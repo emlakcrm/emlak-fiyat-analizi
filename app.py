@@ -8,16 +8,17 @@ import socket
 
 # --- 1. AYARLAR VE GÜVENLİK (SECRETS) ---
 def ayar_getir(anahtar, varsayilan):
-    """st.secrets'tan ayarı alır, yoksa varsayılanı kullanır."""
+    """st.secrets'tan ayarı alır, yoksa varsayilanı kullanır."""
     try: 
         return st.secrets.get(anahtar, varsayilan)
     except: 
         return varsayilan
 
-# Uygulama Ayarları (E-posta ayarları geri eklendi)
-GÖNDEREN_EMAIL = ayar_getir("GÖNDEREN_EMAIL", "piyazsosu@gmail.com")
+# Uygulama Ayarları
+# GÖNDEREN_EMAIL: Burası Selman Bey'in analizleri alacağı mail adresidir.
+GÖNDEREN_EMAIL = ayar_getir("GÖNDEREN_EMAIL", "piyazsosu@gmail.com") 
 UYGULAMA_SIFRESI = ayar_getir("UYGULAMA_SIFRESI", "ikafvsebounnuhng") 
-WHATSAPP_NUMARASI = ayar_getir("WHATSAPP_NUMARASI", "905355739260")
+WHATSAPP_NUMARASI = ayar_getir("WHATSAPP_NUMARASI", "905355739260") # Burası Selman Bey'in WhatsApp numarasıdır.
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -46,7 +47,6 @@ def mail_gonder(alici_mail, konu, icerik):
         mesaj['Subject'] = konu
         mesaj.attach(MIMEText(icerik, 'plain'))
 
-        # 
         sunucu = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
         sunucu.starttls()
         sunucu.login(GÖNDEREN_EMAIL, UYGULAMA_SIFRESI)
@@ -143,22 +143,23 @@ with c_mid:
         notlar = st.text_area("📝 Diger Özellikler:", placeholder="Dairenin cephesi, manzara, tadilat durumu,ayrı mutfak,ayrı wc,site içi vb.")
         
         st.markdown("<hr style='border: 0.5px solid #C4D8BF;'>", unsafe_allow_html=True)
-        # E-posta alanı geri eklendi
-        alici_email = st.text_input("E-posta Adresiniz (Analiz size ve bize gönderilecektir):") 
+        
+        # Müşteri E-posta alanı kaldırıldı
         ad = st.text_input("Adınız Soyadınız:")
         tel = st.text_input("Telefon Numaranız:")
         
         btn_mail, btn_wa = st.columns(2)
-        s_mail = btn_mail.form_submit_button("📩 ANALİZİ E-POSTA İLE AL")
-        s_wa = btn_wa.form_submit_button("💬 WHATSAPP'TAN SOR")
+        # Buton metni daha net hale getirildi
+        s_mail = btn_mail.form_submit_button("📩 ANALİZİ BANA MAİL AT")
+        s_wa = btn_wa.form_submit_button("💬 WHATSAPP İLE BANA SOR")
 
 # --- 7. ANALİZ VE İŞLEM SONUCU ---
 if (s_mail or s_wa):
     
     # 7.1 TEMEL KONTROL
-    # E-posta butonu tıklandıysa E-posta adresi zorunlu
-    if not ad or not tel or (s_mail and not alici_email):
-        st.error("Lütfen Adınız, Telefon Numaranız ve E-posta adresinizi (e-posta ile analiz için) tam giriniz.")
+    # Sadece Ad ve Telefon zorunlu tutuluyor
+    if not ad or not tel:
+        st.error("Lütfen Adınız ve Telefon Numaranızı tam giriniz.")
         st.stop()
 
     # 7.2 BÖLGE ANALİZİ (Min/Max Fiyat Hesaplama)
@@ -194,34 +195,31 @@ if (s_mail or s_wa):
 
     # 7.4 İŞLEM ADIMLARI
     
-    # A) E-POSTA GÖNDERME (Size ve Müşteriye)
+    # A) E-POSTA GÖNDERME (Sadece Selman Bey'e)
     if s_mail:
         konu = f"YENİ EKSPERTİZ TALEBİ: {mahalle} - {oda} ({ad})"
         
-        # 1. Size Giden Mail (Tüm detaylar)
-        gonderim_basarili_size, hata_mesaji_size = mail_gonder(GÖNDEREN_EMAIL, konu, analiz_mesaji)
+        # Analiz, GÖNDEREN_EMAIL (Sizin adresinize) gönderiliyor.
+        gonderim_basarili, hata_mesaji = mail_gonder(GÖNDEREN_EMAIL, konu, analiz_mesaji)
 
-        # 2. Müşteriye Giden Bilgi Maili (Daha kısa, sonuç odaklı)
-        musteri_mesaji = f"Merhaba {ad},\n\nEmlak Analiz Uygulamasından gelen özet analiziniz aşağıdadır:\n\nTahmini Bölge Değer Aralığı: {sonuc}\n\nDetaylı ekspertiz ve yerinde inceleme için en kısa sürede sizinle iletişime geçilecektir."
-        gonderim_basarili_musteri, hata_mesaji_musteri = mail_gonder(alici_email, "Emlak Analiz Sonucunuz", musteri_mesaji)
-
-        # Kullanıcıya genel geri bildirim
-        if gonderim_basarili_size and gonderim_basarili_musteri:
-            st.success(f"Analiz talebi başarıyla iletildi. Size ve bize ({alici_email}) bilgi e-postası gönderildi.")
+        if gonderim_basarili:
+            st.success("Analiz detayları E-posta adresinize (Selman Bey) başarıyla iletildi. En kısa sürede müşteriyle iletişime geçilecektir.")
         else:
-            st.warning("E-posta gönderiminde kısmi veya tam başarısızlık oldu. Lütfen WhatsApp'tan kontrol edin.")
+            st.error(f"Analiz talebiniz E-posta ile tarafınıza iletilemedi. Lütfen WhatsApp'tan kontrol ediniz. Hata: {hata_mesaji}")
     
-    # B) WHATSAPP GÖNDERME
+    # B) WHATSAPP GÖNDERME (Sadece Selman Bey'e)
     if s_wa:
         wa_mesaj = analiz_mesaji 
         st.link_button("📲 WHATSAPP İLE ANALİZİ İLET", f"https://wa.me/{WHATSAPP_NUMARASI}?text={urllib.parse.quote(wa_mesaj)}", type="primary", use_container_width=True)
+        st.success("Analiz detayları WhatsApp üzerinden iletilmeye hazır. Lütfen çıkan butona tıklayınız.")
+
 
     # 7.5 KULLANICIYA SONUCU GÖSTERME
     st.markdown(f"""
         <div style="background:var(--main-light); padding:25px; border-radius:10px; border:2px solid var(--main-dark); text-align:center; margin-top:20px;">
             <h4 style="color:var(--main-dark); margin:0;">Tahmini Piyasa Değer Aralığı</h4>
             <h1 style="color:var(--cta-dark); margin:10px 0;">{sonuc}</h1>
-            <p style="color:var(--text-color); margin:0; font-weight: 500;">*Bu aralık, sadece bölgenizdeki genel ilan fiyatlarına dayanır. Detaylı ekspertiz için sizinle iletişime geçilecektir.</p>
+            <p style="color:var(--text-color); margin:0; font-weight: 500;">*Bu aralık, sadece bölgenizdeki genel ilan fiyatlarına dayanır. Detaylı ekspertiz için en kısa sürede sizinle iletişime geçilecektir.</p>
         </div>
     """, unsafe_allow_html=True)
 
