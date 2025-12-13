@@ -128,8 +128,7 @@ st.markdown("""
                 <a href="https://emlakcrm.github.io/emlak/hakkimizda.html" target="_blank">Hakkımızda</a>
                 <a href="https://emlakcrm.github.io/emlak/ilanlar.html" target="_blank">İlanlar</a>
                 <a href="https://emlakcrm.github.io/emlak/form.html" target="_blank">Form</a>
-                <a href="https://emlakcrm.github.io/emlak/analiz.html" target="_blank">Analiz</a>
-                <a href="https://emlakcrm.github.io/emlak/iletisim.html" target="_blank">İletişim</a>
+                                <a href="https://emlakcrm.github.io/emlak/iletisim.html" target="_blank">İletişim</a>
             </nav>
         </div>
     </header>
@@ -199,3 +198,4 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
