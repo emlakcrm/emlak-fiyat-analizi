@@ -225,9 +225,9 @@ if (s_mail or s_wa) and ad and tel:
 st.markdown("<br>", unsafe_allow_html=True)
 k1, k2, k3 = st.columns(3)
 with k1:
-    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Gayrimenkulünüzün değerini sadece fiziksel özellikleriyle değil, bulunduğu bölgenin güncel dinamikleriyle belirliyoruz. Mahallenizdeki son satış fiyatları, talep yoğunluğu ve yatırım potansiyeli gibi gerçek piyasa verilerini analiz ederek, size güvenilir bir başlangıç fiyatı sunuyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Gayrimenkulünüzün çevresindeki benzer mülklerin satış performansını ve eğilimlerini inceliyoruz. Bu derinlemesine inceleme, mülkünüzü pazarda rekabetçi ancak kârlı bir şekilde konumlandırmamızı sağlıyor.</p></div>', unsafe_allow_html=True)
 with k2:
-    st.markdown('<div class="info-card"><h4>📐 Detaylı Teknik Değerleme</h4><p>Mülkünüzün değerini belirlerken sadece m²'ye bakmıyoruz. Kat konumu, cephe avantajı, ulaşım ve bina yaşı gibi tüm teknik kriterleri bilimsel yöntemlerle analiz ederek, gayrimenkulünüzün piyasadaki en doğru, somut değerini ortaya çıkarıyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>📐 Detaylı Teknik Değerleme</h4><p>Bölge Dinamikleriyle Gerçek Değer. Mülkünüzün fiyatını, mahallenizdeki son satış verilerini, talep ve yatırım potansiyelini analiz ederek belirliyor, size güvenilir bir başlangıç fiyatı sunuyoruz..</p></div>', unsafe_allow_html=True)
 with k3:
     st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Gayrimenkulünüzü piyasada hak ettiği en doğru fiyattan konumlandırıyoruz. Profesyonel analizlerimiz ve geniş pazar bilgimizle, satış sürecinizi şeffaflıkla yönetiyor ve size zaman kazandırıyoruz. Mülkünüz emin ellerde.</p></div>', unsafe_allow_html=True)
 
@@ -239,4 +239,5 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
 
