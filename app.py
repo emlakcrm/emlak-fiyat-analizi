@@ -187,7 +187,7 @@ k1, k2, k3 = st.columns(3)
 with k1:
     st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Mahallenizdeki güncel piyasa verilerini ve son satışları inceliyoruz.</p></div>', unsafe_allow_html=True)
 with k2:
-    st.markdown('<div class="info-card"><h4>📏 Teknik Kriterler</h4><p>Kat, cephe, m2 ve bina yaşı gibi faktörleri yapay zeka ile harmanlıyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>📏 Teknik Kriterler</h4><p>Kat, cephe, m2 ve bina yaşı gibi faktörleri eksiksiz değerlendiriyoruz .</p></div>', unsafe_allow_html=True)
 with k3:
     st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Mülkünüzü en doğru fiyata pazarlıyoruz.</p></div>', unsafe_allow_html=True)
 
@@ -199,5 +199,6 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
 
 
