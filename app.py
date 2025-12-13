@@ -188,7 +188,7 @@ with c_mid:
             kat = st.selectbox("🏢 Kat Durumu:", ["Giriş", "Ara Kat", "En Üst"])
             asansor = st.radio("🛗 Asansör:", ["Var", "Yok"], horizontal=True)
 
-        notlar = st.text_area("📝 Ek Özellikler:", placeholder="Dairenin cephesi, manzara, tadilat durumu vb.")
+        notlar = st.text_area("📝 Diger Özellikler:", placeholder="Dairenin cephesi, manzara, tadilat durumu,ayrı mutfak,ayrı wc,site içi vb.")
         
         st.markdown("<hr style='border: 0.5px solid #C4D8BF;'>", unsafe_allow_html=True)
         ad = st.text_input("Adınız Soyadınız:")
@@ -225,11 +225,11 @@ if (s_mail or s_wa) and ad and tel:
 st.markdown("<br>", unsafe_allow_html=True)
 k1, k2, k3 = st.columns(3)
 with k1:
-    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Mahallenizdeki güncel piyasa verilerini ve son satışları inceliyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>📍 Bölge Analizi</h4><p>Gayrimenkulünüzün değerini sadece fiziksel özellikleriyle değil, bulunduğu bölgenin güncel dinamikleriyle belirliyoruz. Mahallenizdeki son satış fiyatları, talep yoğunluğu ve yatırım potansiyeli gibi gerçek piyasa verilerini analiz ederek, size güvenilir bir başlangıç fiyatı sunuyoruz.</p></div>', unsafe_allow_html=True)
 with k2:
-    st.markdown('<div class="info-card"><h4>📏 Teknik Kriterler</h4><p>Kat, cephe, m2 ve bina yaşı gibi faktörleri en iyi şekilde değerlendiriyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>📐 Detaylı Teknik Değerleme</h4><p>Mülkünüzün değerini belirlerken sadece m²'ye bakmıyoruz. Kat konumu, cephe avantajı, ulaşım ve bina yaşı gibi tüm teknik kriterleri bilimsel yöntemlerle analiz ederek, gayrimenkulünüzün piyasadaki en doğru, somut değerini ortaya çıkarıyoruz.</p></div>', unsafe_allow_html=True)
 with k3:
-    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Mülkünüzü en doğru fiyata pazarlıyoruz.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card"><h4>🤝 Uzman Desteği</h4><p>Gayrimenkulünüzü piyasada hak ettiği en doğru fiyattan konumlandırıyoruz. Profesyonel analizlerimiz ve geniş pazar bilgimizle, satış sürecinizi şeffaflıkla yönetiyor ve size zaman kazandırıyoruz. Mülkünüz emin ellerde.</p></div>', unsafe_allow_html=True)
 
 # --- FOOTER ---
 st.markdown(f"""
@@ -239,3 +239,4 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
