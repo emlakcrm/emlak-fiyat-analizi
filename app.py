@@ -124,12 +124,12 @@ st.markdown("""
             <h1>Antalya Gayrimenkul Danışmanı</h1>
             <p class="lead">Güven, Şeffaflık ve Sonuç Odaklı Gayrimenkul Danışmanlığı</p>
             <nav>
-                <a href="https://emlakcrm.github.io/emlak/index.html">Ana Sayfa</a>
-                <a href="https://emlakcrm.github.io/emlak/hakkimizda.html">Hakkımızda</a>
-                <a href="https://emlakcrm.github.io/emlak/ilanlar.html">İlanlar</a>
-                <a href="https://emlakcrm.github.io/emlak/form.html">Form</a>
-                <a href="https://emlakcrm.github.io/emlak/analiz.html">Analiz</a>
-                <a href="https://emlakcrm.github.io/emlak/iletisim.html">İletişim</a>
+                <a href="https://emlakcrm.github.io/emlak/index.html" target="_self">Ana Sayfa</a>
+                <a href="https://emlakcrm.github.io/emlak/hakkimizda.html" target="_self">Hakkımızda</a>
+                <a href="https://emlakcrm.github.io/emlak/ilanlar.html" target="_self">İlanlar</a>
+                <a href="https://emlakcrm.github.io/emlak/form.html" target="_self">Form</a>
+                <a href="https://emlakcrm.github.io/emlak/analiz.html" target="_self">Analiz</a>
+                <a href="https://emlakcrm.github.io/emlak/iletisim.html" target="_self">İletişim</a>
             </nav>
         </div>
     </header>
@@ -199,4 +199,5 @@ st.markdown(f"""
         <p style="font-size:13px; opacity:0.8;">© 2025 Tüm Hakları Saklıdır. | İletişim: {WHATSAPP_NUMARASI}</p>
     </div>
     """, unsafe_allow_html=True)
+
 
